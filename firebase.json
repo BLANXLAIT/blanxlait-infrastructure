@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "blanxlait-infrastructure",
     "public": "blanxlait-site/dist",
     "ignore": [
       "firebase.json",
