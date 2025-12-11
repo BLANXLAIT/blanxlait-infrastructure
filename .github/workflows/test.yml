@@ -167,9 +167,12 @@ jobs:
       with:
         workload_identity_provider: 'projects/146869023108/locations/global/workloadIdentityPools/github-pool/providers/github-oidc-v2'
         service_account: 'github-ci@github-ci-blanxlait.iam.gserviceaccount.com'
+        project_id: 'blanxlait-infrastructure'
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: 'blanxlait-infrastructure'
 
     - name: Install Firebase CLI
       run: npm install -g firebase-tools
