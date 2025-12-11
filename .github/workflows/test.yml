@@ -189,13 +189,11 @@ jobs:
 
     - name: Deploy to Firebase Hosting
       run: |
-        export FIREBASE_TOKEN=$(gcloud auth print-access-token)
+        gcloud auth application-default set-quota-project blanxlait-infrastructure
         firebase deploy --only hosting --project blanxlait-infrastructure
 
     - name: Deploy Firestore Rules
-      run: |
-        export FIREBASE_TOKEN=$(gcloud auth print-access-token)
-        firebase deploy --only firestore:rules --project blanxlait-infrastructure
+      run: firebase deploy --only firestore:rules --project blanxlait-infrastructure
 
     - name: Deployment Success
       run: |
