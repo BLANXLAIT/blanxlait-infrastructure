@@ -143,44 +143,40 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test-and-build, performance-test, security-test]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
+      id-token: write
     steps:
     - uses: actions/checkout@v4
-    
+
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
-        
+
     - name: Install dependencies
       working-directory: ./blanxlait-site
       run: npm ci
-      
+
     - name: Build the site
       working-directory: ./blanxlait-site
       run: npm run build
-      
+
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: 'projects/146869023108/locations/global/workloadIdentityPools/github-pool/providers/github-oidc-v2'
+        service_account: 'github-ci@github-ci-blanxlait.iam.gserviceaccount.com'
+
     - name: Install Firebase CLI
       run: npm install -g firebase-tools
-      
-    - name: Verify Firebase token
-      run: |
-        if [ -z "$FIREBASE_TOKEN" ]; then
-          echo "❌ FIREBASE_TOKEN secret not found"
-          exit 1
-        fi
-        echo "✅ Firebase token is configured"
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      
+
     - name: Deploy to Firebase Hosting
       run: firebase deploy --only hosting --project blanxlait-infrastructure
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        
+
     - name: Deploy Firestore Rules
       run: firebase deploy --only firestore:rules --project blanxlait-infrastructure
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        
+
     - name: Deployment Success
       run: |
         echo "🚀 Deployment completed successfully!"
