@@ -37,10 +37,10 @@ test.describe('Core Functionality Tests', () => {
     await contactLink.click({ force: true });
     await expect(page.locator('#contact')).toBeInViewport();
     
-    const homeLink = page.locator('nav a[href="#home"]');
-    // For mobile browsers, use evaluate to trigger the click
-    await homeLink.evaluate((el) => (el as HTMLElement).click());
-    // Check we're back at top - use hero section as it's more reliable than #home
+    const homeLink = page.locator('nav a[href="/"]');
+    await homeLink.scrollIntoViewIfNeeded();
+    await homeLink.click({ force: true });
+    // Check we're back at top - use hero section as it's more reliable
     await expect(page.locator('.hero')).toBeInViewport();
   });
 
