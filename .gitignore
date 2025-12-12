@@ -9,6 +9,10 @@ node_modules/
 dist/
 build/
 
+# Test reports
+playwright-report/
+test-results/
+
 # Environment files
 .env
 .env.local
