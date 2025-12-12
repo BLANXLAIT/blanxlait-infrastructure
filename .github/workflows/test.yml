@@ -188,11 +188,13 @@ jobs:
         echo "..."
 
     - name: Deploy to Firebase Hosting
-      run: |
-        gcloud auth application-default set-quota-project blanxlait-infrastructure
-        firebase deploy --only hosting --project blanxlait-infrastructure
+      env:
+        GOOGLE_CLOUD_QUOTA_PROJECT: blanxlait-infrastructure
+      run: firebase deploy --only hosting --project blanxlait-infrastructure
 
     - name: Deploy Firestore Rules
+      env:
+        GOOGLE_CLOUD_QUOTA_PROJECT: blanxlait-infrastructure
       run: firebase deploy --only firestore:rules --project blanxlait-infrastructure
 
     - name: Deployment Success
