@@ -41,30 +41,24 @@ test.describe('Accessibility Tests', () => {
     }
   });
 
-  test('should have proper form labels', async ({ page }) => {
+  test('should have proper contact section accessibility', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    
-    // Navigate to contact form
+
+    // Navigate to contact section
     const contactLink = page.locator('a[href="#contact"]').first();
     await contactLink.scrollIntoViewIfNeeded();
     await contactLink.click({ force: true });
-    
-    // Check that all form inputs have proper labels
-    const nameInput = page.locator('input[name="name"]');
-    const emailInput = page.locator('input[name="email"]');
-    const companyInput = page.locator('input[name="company"]');
-    const messageInput = page.locator('textarea[name="message"]');
-    
-    // Check inputs are properly labeled
-    await expect(nameInput).toBeVisible();
-    await expect(emailInput).toBeVisible();
-    await expect(companyInput).toBeVisible();
-    await expect(messageInput).toBeVisible();
-    
-    // Check for required field indicators
-    await expect(page.locator('text=Name *')).toBeVisible();
-    await expect(page.locator('text=Email *')).toBeVisible();
+
+    // Check Cal.com booking link is accessible
+    const bookingLink = page.locator('a[href*="cal.com"]');
+    await expect(bookingLink).toBeVisible();
+    await expect(bookingLink).toHaveAttribute('target', '_blank');
+    await expect(bookingLink).toHaveAttribute('rel', 'noopener noreferrer');
+
+    // Check email link is accessible
+    const emailLink = page.locator('a[href="mailto:hello@blanxlait.com"]');
+    await expect(emailLink).toBeVisible();
   });
 
   test('should have proper color contrast', async ({ page }) => {

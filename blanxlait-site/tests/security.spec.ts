@@ -33,27 +33,19 @@ test.describe('Security Tests', () => {
     }
   });
 
-  test('should validate contact form input', async ({ page }) => {
+  test('should have secure external links', async ({ page }) => {
     await page.goto('/');
     await page.click('a[href="#contact"]');
-    
-    // Test empty form submission
-    const submitButton = page.locator('button[type="submit"]');
-    await submitButton.click();
-    
-    // Should not submit with empty fields (basic validation)
-    await expect(page.locator('input[name="name"]')).toBeVisible();
-    
-    // Test long input rejection
-    const longString = 'a'.repeat(2001);
-    await page.fill('input[name="name"]', 'Test User');
-    await page.fill('input[name="email"]', 'test@example.com');
-    await page.fill('textarea[name="message"]', longString);
-    
-    await submitButton.click();
-    
-    // Should handle validation gracefully
-    await expect(page.locator('button[type="submit"]')).toBeEnabled();
+
+    // Check Cal.com link has proper security attributes
+    const calLink = page.locator('a[href*="cal.com"]');
+    await expect(calLink).toBeVisible();
+    await expect(calLink).toHaveAttribute('rel', 'noopener noreferrer');
+    await expect(calLink).toHaveAttribute('target', '_blank');
+
+    // Check email link is properly formatted
+    const emailLink = page.locator('a[href="mailto:hello@blanxlait.com"]');
+    await expect(emailLink).toBeVisible();
   });
 
   test('should have proper meta tags for security', async ({ page }) => {
@@ -92,29 +84,21 @@ test.describe('Security Tests', () => {
     }
   });
 
-  test('should handle XSS prevention', async ({ page }) => {
+  test('should not render user-controlled content unsafely', async ({ page }) => {
     await page.goto('/');
-    await page.click('a[href="#contact"]');
-    
-    // Try to inject script in form fields
-    const xssPayload = '<script>alert("xss")</script>';
-    
-    await page.fill('input[name="name"]', xssPayload);
-    await page.fill('input[name="email"]', 'test@example.com');
-    await page.fill('input[name="company"]', xssPayload);
-    await page.fill('textarea[name="message"]', 'Test message with XSS: ' + xssPayload);
-    
-    // Form should accept input but sanitize it (our sanitization will remove scripts)
-    await expect(page.locator('input[name="name"]')).toHaveValue(xssPayload);
-    
-    // Check that the form is properly validating - no actual alert should appear
-    // We're testing that the form accepts input but processes it safely
-    const nameField = page.locator('input[name="name"]');
-    await expect(nameField).toBeVisible();
-    
-    // Verify form validation is working
-    const submitButton = page.locator('button[type="submit"]');
-    await expect(submitButton).toBeVisible();
+
+    // Verify that the page doesn't have any inline scripts from user input
+    // (Contact section now uses Cal.com external link, no form to inject)
+    const inlineScripts = page.locator('script:not([src])');
+    const inlineScriptCount = await inlineScripts.count();
+
+    // Check that inline scripts don't contain suspicious patterns
+    for (let i = 0; i < inlineScriptCount; i++) {
+      const scriptContent = await inlineScripts.nth(i).textContent();
+      expect(scriptContent).not.toContain('alert(');
+      expect(scriptContent).not.toContain('eval(');
+      expect(scriptContent).not.toContain('document.write(');
+    }
   });
 
   test('should have proper HTTPS configuration', async ({ page, baseURL }) => {

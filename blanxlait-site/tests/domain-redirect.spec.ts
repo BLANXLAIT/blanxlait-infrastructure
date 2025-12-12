@@ -38,19 +38,16 @@ test.describe('Domain Redirect Tests', () => {
   test('should maintain functionality after redirect setup', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    
+
     // Test that navigation still works
     const contactLink = page.locator('nav a[href="#contact"]');
     await expect(contactLink).toBeVisible();
     await contactLink.click();
     await expect(page.locator('#contact')).toBeInViewport();
-    
-    // Test that contact form still works
-    await page.fill('input[name="name"]', 'Test User');
-    await page.fill('input[name="email"]', 'test@example.com');
-    
-    const submitButton = page.locator('button[type="submit"]');
-    await expect(submitButton).toBeVisible();
-    await expect(submitButton).toBeEnabled();
+
+    // Test that contact section works (Cal.com booking link)
+    const bookingLink = page.locator('a[href*="cal.com"]');
+    await expect(bookingLink).toBeVisible();
+    await expect(bookingLink).toContainText('Schedule a Call');
   });
 });
