@@ -122,7 +122,7 @@ test.describe('Core Functionality Tests', () => {
     
     // Check footer elements
     await expect(page.locator('footer')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('footer .logo-text')).toContainText('BLANXLAIT');
+    await expect(page.locator('footer .logo')).toContainText('BLANXLAIT');
     await expect(page.locator('footer .footer-copyright')).toContainText('© 2025 BLANXLAIT. All rights reserved.');
     
     // Check footer links

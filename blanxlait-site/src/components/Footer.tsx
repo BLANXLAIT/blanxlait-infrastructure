@@ -1,4 +1,5 @@
 import React from 'react';
+import Logo from './Logo';
 
 interface FooterProps {
   onNavigatePrivacy?: () => void;
@@ -29,17 +30,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigatePrivacy, onNavigateTerms }) =
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <div className="logo">
-              <div className="logo-icon">
-                <div className="logo-square"></div>
-                <div className="logo-dot"></div>
-              </div>
-              <span className="logo-text">
-                BLANXL
-                <span className="logo-ai">AI</span>
-                T
-              </span>
-            </div>
+            <Logo variant="light" />
             <p className="footer-description">
               Developing AI-native software solutions that transform how small and medium businesses operate. 
               AI at the core, not as an afterthought.

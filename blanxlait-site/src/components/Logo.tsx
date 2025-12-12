@@ -2,9 +2,10 @@ import React from 'react';
 
 interface LogoProps {
   onNavigateHome?: () => void;
+  variant?: 'dark' | 'light';
 }
 
-const Logo: React.FC<LogoProps> = ({ onNavigateHome }) => {
+const Logo: React.FC<LogoProps> = ({ onNavigateHome, variant = 'dark' }) => {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (onNavigateHome) {
@@ -14,8 +15,10 @@ const Logo: React.FC<LogoProps> = ({ onNavigateHome }) => {
     }
   };
 
+  const className = variant === 'light' ? 'logo logo-light' : 'logo';
+
   return (
-    <a href="/" onClick={handleClick} className="logo">
+    <a href="/" onClick={handleClick} className={className}>
       <div className="logo-icon">
         <div className="logo-dot"></div>
       </div>
