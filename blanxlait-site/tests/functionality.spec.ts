@@ -64,56 +64,40 @@ test.describe('Core Functionality Tests', () => {
     await expect(page.locator('#services').getByText('AI Readiness Assessment')).toBeVisible();
   });
 
-  test('should have functional contact form', async ({ page }) => {
+  test('should have contact section with Cal.com booking', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    
+
     const contactLink = page.locator('nav a[href="#contact"]');
     await expect(contactLink).toBeVisible();
     await contactLink.scrollIntoViewIfNeeded();
     await contactLink.click({ force: true });
-    
-    // Fill out the form
-    await page.fill('input[name="name"]', 'John Doe');
-    await page.fill('input[name="email"]', 'john@example.com');
-    await page.fill('input[name="company"]', 'Test Company');
-    await page.fill('textarea[name="message"]', 'I am interested in your AI solutions.');
-    
-    // Check form values are filled
-    await expect(page.locator('input[name="name"]')).toHaveValue('John Doe');
-    await expect(page.locator('input[name="email"]')).toHaveValue('john@example.com');
-    await expect(page.locator('input[name="company"]')).toHaveValue('Test Company');
-    await expect(page.locator('textarea[name="message"]')).toHaveValue('I am interested in your AI solutions.');
-    
-    // Check submit button is visible and clickable
-    const submitButton = page.locator('button[type="submit"]');
-    await expect(submitButton).toBeVisible();
-    await expect(submitButton).toBeEnabled();
-    
-    // Note: We don't actually submit in tests to avoid creating Firestore documents
-    // In a real test environment, you'd mock the Firebase services
+
+    // Check contact section content
+    await expect(page.locator('#contact h3')).toContainText('Book a Free Consultation');
+
+    // Check Cal.com booking link
+    const bookingLink = page.locator('a[href*="cal.com"]');
+    await expect(bookingLink).toBeVisible();
+    await expect(bookingLink).toContainText('Schedule a Call');
+
+    // Check email fallback
+    await expect(page.locator('a[href="mailto:hello@blanxlait.com"]')).toBeVisible();
   });
 
-  test('should handle contact form submission states', async ({ page }) => {
+  test('should display contact info cards', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    
-    // Navigate to contact form
+
+    // Navigate to contact section
     const contactLink = page.locator('nav a[href="#contact"]');
     await contactLink.click({ force: true });
-    
-    // Fill out the form
-    await page.fill('input[name="name"]', 'Test User');
-    await page.fill('input[name="email"]', 'test@example.com');
-    await page.fill('textarea[name="message"]', 'Test message');
-    
-    // Check initial button state
-    const submitButton = page.locator('button[type="submit"]');
-    await expect(submitButton).toContainText('Start Your AI Journey');
-    await expect(submitButton).toBeEnabled();
-    
-    // Note: We don't test actual submission to avoid creating test Firestore documents
-    // In production, you'd set up Firebase emulators for comprehensive testing
+
+    // Check info cards are displayed
+    await expect(page.locator('.contact-info-card')).toHaveCount(3);
+    await expect(page.locator('text=Minutes')).toBeVisible();
+    await expect(page.locator('text=Response Time')).toBeVisible();
+    await expect(page.locator('text=Expert Guidance')).toBeVisible();
   });
 
   test('should display footer content correctly', async ({ page }) => {
